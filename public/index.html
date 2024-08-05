@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roasting Foto</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-slate-100">
+    <main class="container">
+      <h1 class="text-xl text-center font-bold">Roasting Foto</h1>
+
+      <small>
+        <blockquote>
+          Foto akan langsung di hapus jadi tenang aja gabakal bocor dan gabakal
+          bisa dilihat orang lain. source:
+          <a href="https://github.com/kevintherm/image-roaster">Sumber</a>
+        </blockquote>
+      </small>
+
+      <form enctype="multipart/form-data">
+        <label for="photo">Pilih gambar yang mau di roasting</label>
+        <input
+          type="file"
+          accept="image/*"
+          placeholder="Pilih gambar"
+          id="photo"
+          required
+        />
+        <button>🔥 Menyalakan 🔥</button>
+      </form>
+
+      <div aria-busy="true" id="loading" style="opacity: 0; margin-block: 32px">
+        Sabar lagi mikir...
+      </div>
+
+      <img
+        id="preview"
+        src=""
+        alt="Foto Terkait"
+        style="opacity: 0; max-width: 350px; height: 0"
+      />
+
+      <p id="roast" style="margin-block: 32px"></p>
+    </main>
+
+    <hr>
+
+    <footer class="container">
+      <p>No Copyright &#169; KevinDRM - Pakai suka suka 🔥 source code ada dibawah</p>      
+      <p>Support developer 😁</p>
+      <ul>
+        <li>
+          <a target="_blank" href="https://saweria.co/kevindrm">Saweria</a>
+        </li>
+        <li>
+          <a target="_blank" href="https://github.com/kevintherm/image-roaster"
+            >Github</a
+          >
+        </li>
+        <li>
+          <a target="_blank" href="https://instagram.com/kevindotdev"
+            >Instagram</a
+          >
+        </li>
+      </ul>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      const form = document.querySelector("form");
+      const photo = document.querySelector("#photo");
+      const roast = document.querySelector("#roast");
+      const loading = document.querySelector("#loading");
+      const preview = document.querySelector("#preview");
+
+      photo.onchange = (evt) => {
+        const [file] = photo.files;
+        if (file) {
+          preview.src = URL.createObjectURL(file);
+        }
+      };
+
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        loading.style.opacity = 1;
+        roast.innerHTML = "";
+
+        const data = new FormData();
+        data.append("file", photo.files[0]);
+
+        fetch("/upload", {
+          method: "POST",
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.ok) {
+              loading.style.opacity = 0;
+              roast.innerHTML =
+                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣 Klik Roast buat coba lagi";
+            } else {
+              preview.style.opacity = 1;
+              preview.style.height = '100%';
+              loading.style.opacity = 0;
+              form.reset();
+              roast.innerHTML = marked.parse(data.text);
+            }
+          });
+      };
+    </script>
+  </body>
+</html>

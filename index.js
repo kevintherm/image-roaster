@@ -15,13 +15,20 @@ function generateRandomString(length) {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const fastify = Fastify({ logger: true });
+const fastify = Fastify({
+  logger: true, 
+  bodyLimit: 10485760 
+});
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
 });
 
-fastify.register(fastifyMultipart);
+fastify.register(fastifyMultipart, {
+  imits: {
+    fileSize: 10485760 // 10 MB
+  }
+});
 
 fastify.register(fastifyCors, {
   origin: (origin, callback) => {

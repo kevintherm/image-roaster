@@ -17,7 +17,10 @@
         <blockquote>
           Foto akan langsung di hapus jadi tenang aja gabakal bocor dan gabakal
           bisa dilihat orang lain. source:
-          <a href="https://github.com/kevintherm/image-roaster/blob/main/roast.js#L44">Sumber</a>
+          <a
+            href="https://github.com/kevintherm/image-roaster/blob/main/roast.js#L44"
+            >Sumber</a
+          >
         </blockquote>
       </small>
 
@@ -47,10 +50,13 @@
       <p id="roast" style="margin-block: 32px"></p>
     </main>
 
-    <hr>
+    <hr />
 
     <footer class="container">
-      <p>No Copyright &#169; KevinDRM - Pakai suka suka 🔥 source code ada dibawah</p>      
+      <p>
+        No Copyright &#169; KevinDRM - Pakai suka suka 🔥 source code ada
+        dibawah
+      </p>
       <p>Support developer 😁</p>
       <ul>
         <li>
@@ -100,16 +106,22 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            if (!data.ok) {
-              loading.style.opacity = 0;
-              roast.innerHTML =
-                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣 Klik Roast buat coba lagi";
-            } else {
+            if (data.ok) {
               preview.style.opacity = 1;
-              preview.style.height = '100%';
+              preview.style.height = "100%";
               loading.style.opacity = 0;
               form.reset();
               roast.innerHTML = marked.parse(data.text);
+            } else if (data.statusCode == 429) {
+              preview.style.opacity = 1;
+              preview.style.height = "100%";
+              loading.style.opacity = 0;
+              form.reset();
+              roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭`;
+            } else {
+              loading.style.opacity = 0;
+              roast.innerHTML =
+                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣 Klik Roast buat coba lagi";
             }
           });
       };

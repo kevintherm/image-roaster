@@ -18,11 +18,6 @@ export async function describeImage(img) {
         displayName: "Image",
     });
 
-    const model = genAI.getGenerativeModel({
-        // The Gemini 1.5 models are versatile and work with multimodal prompts
-        model: "gemini-1.5-flash",
-    });
-
     const result = await model.generateContent([
         {
             fileData: {
@@ -35,38 +30,42 @@ export async function describeImage(img) {
 
     // delete image from cloud
     await fileManager.deleteFile(uploadResult.file.name);
+
+    // delete image uploaded
+    fs.unlinkSync(img.path);
+
     console.log(`Deleted ${uploadResult.file.displayName}`);
 
     const response = await result.response
     const imageDesc = response.text()
 
-    // delete image uploaded
-    fs.unlinkSync(img.path);
-
     return imageDesc
 }
 
-export async function getRoast(imgFilename = '') {
+export async function getRoast(img = '') {
 
-    const model = genAI.getGenerativeModel({
-        // The Gemini 1.5 models are versatile and work with multimodal prompts
-        model: "gemini-1.5-flash",
-    });
+    try {
+        const imageDesc = await describeImage(img);
 
-    const imageDesc = await describeImage(imgFilename);
-
-    const prompt = `${imageDesc}
+        const prompt = `${imageDesc}
     
     I want you to act like meanest person in the world that a lot of people hate because what you said is so true .
     Make a roast for this image description, you can also use a little bit, light, safe and totally non offensive indonesian words or light profanity, you also must use young people words. using the data make the roast very detailed and very critique, also make the roast in indonesian using simple language and edgy like most indonesian speak. oh and also you can put some emojies to spice things up. Give it your best roast on the market. Answer should be less than 500 words, generate the response in markdown.
     `
 
-    const result = await model.generateContent(prompt);
+        const result = await model.generateContent(prompt);
 
-    const response = await result.response
-    const text = response.text()    
+        const response = await result.response
+        const text = response.text()
 
-    return text
+        return text
+    } catch (error) {
+        if (fs.existsSync(img.path)) {
+            fs.unlinkSync(img.path)
+        }
+
+        throw error;
+    }
 }
 
 

@@ -16,8 +16,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
-  logger: true, 
-  bodyLimit: 10485760 
+  logger: true,
+  bodyLimit: 10485760
 });
 
 fastify.register(fastifyStatic, {
@@ -50,6 +50,7 @@ fastify.get('/', (request, reply) => {
 });
 
 fastify.post('/upload', async (req, res) => {
+
   const parts = req.parts();
   let file;
 
@@ -90,13 +91,16 @@ fastify.post('/upload', async (req, res) => {
     }
   }
 
-  if (!file) {
-    res.status(400).send({ error: 'No image file uploaded' });
-    return;
-  }
+  
 
   // Respond with success
   const roast = await getRoast(file, 'uploads')
+
+  if (await roast) {
+    if (fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path)
+    }
+  }
 
   res.send({
     ok: true,

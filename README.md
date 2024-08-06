@@ -1,4 +1,4 @@
-![Image]([ss1.png](https://github.com/kevintherm/image-roaster/blob/main/ss/ss1.png))
+![Image Thumbnail](https://github.com/kevintherm/image-roaster/blob/main/ss/ss1.png)
 
 # Image Roaster
 

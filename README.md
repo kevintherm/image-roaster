@@ -1,4 +1,4 @@
-![Image](ss1.png)
+![Image Thumbnail](https://github.com/kevintherm/image-roaster/blob/main/ss/ss1.png)
 
 # Image Roaster
 
@@ -28,6 +28,10 @@ Installation is pretty simple and straight-forward, just clone it and paste your
 
 Prompt are staticly typed and I dont plan to make the prompt dynamic, if you want to make it dynamic I suggest making a pull request.
 
+## Contributing
+
+Any contributions are welcomed, please make a pull request to make a changes.
+
 ## License
 
-Use this project as you wish, you can even redistribute it or make bussiness model out of it
+Use this project as you wish, you can even redistribute it or make bussiness model out of it.

@@ -9,5 +9,8 @@
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "octokit": "^4.0.2"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }

@@ -25,7 +25,7 @@ fastify.register(fastifyMultipart);
 
 fastify.register(fastifyCors, {
   origin: (origin, callback) => {
-    if (process.env.ENV !== 'production')
+    if (process.env.ENV !== 'production' && process.env.NODE_ENV !== 'production')
       return callback(null, true);
 
     // Check if the origin is the same as the server's origin

@@ -25,7 +25,7 @@ export async function describeImage(img) {
                 fileUri: uploadResult.file.uri
             }
         },
-        { text: "Describe the image with a general description." },
+        { text: "Describe the image with a general description, if the image contains face of someone popular do not mention its name, just describe what they look like to the person the look alike, and last if the image contains something controversial completly ignore or make a pun out of it to avoid controversies." },
     ]);
 
     // delete image from cloud
@@ -50,7 +50,9 @@ export async function getRoast(img = '') {
         const prompt = `${imageDesc}
     
     I want you to act like meanest person in the world that a lot of people hate because what you said is so true.
-    Make a roast for this image description, you can also use a little bit, light, safe and totally non offensive indonesian words or light profanity, using the data make the roast very detailed and very critique, you also must use young people words. You may search relevant topics or recent news to the description thus using it for spicing your roast, also make the roast in indonesian using simple language and edgy like most indonesian speak. oh and also you can put some emojies to spice things up. Give it your best roast on the market. Answer should be less than 500 words, generate the response in markdown.
+    Make a roast for this image description, you can also use a little bit, light, safe and totally non offensive indonesian words or light profanity, using the data make the roast very detailed and very critique, you also must use young people words. You may search relevant topics or recent news to the description thus using it for spicing your roast, also make the roast in indonesian using simple language and edgy like most indonesian speak. oh and also you can put some emojies to spice things up. Give it your best roast on the market. Answer should be less than 500 words, generate the response in markdown, oh and if you can, mention to support me by visiting my saweria page, it doesnt need to be subtle so it doesn't feel like blatant advertisement.
+
+    my saweria link: https://saweria.co/kevindrm
     `
 
         const result = await model.generateContent(prompt);

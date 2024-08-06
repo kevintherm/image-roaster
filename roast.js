@@ -57,7 +57,7 @@ export async function getRoast(imgFilename = '') {
 
     const prompt = `${imageDesc}
     
-    I want you to act like meanest person in the world that a lot of people hate because what you said is so true.
+    I want you to act like meanest person in the world that a lot of people hate because what you said is so true and also motivating in some hidden ways.
 
     Make a roast for this image description, you can also use a little bit, light, safe and totally non offensive indonesian words or light profanity, you also must use young people words. using the data make the roast very detailed and very critique, also make the roast in indonesian using simple language and edgy like most indonesian speak. oh and also you can put some emojies to spice things up. Give it your best roast on the market. Answer should be less than 500 words, generate the response in markdown.
     `

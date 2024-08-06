@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
-import fastifyMultipart from 'fastify-multipart';
+import fastifyMultipart from '@fastify/multipart';
+import fastifyCors from '@fastify/cors';
 import path from 'path';
 import fs from 'fs';
 import crypto, { randomBytes } from 'crypto';
@@ -19,7 +20,23 @@ const fastify = Fastify({ logger: true });
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
 });
+
 fastify.register(fastifyMultipart);
+
+fastify.register(fastifyCors, {
+  origin: (origin, callback) => {
+    if (process.env.ENV !== 'production')
+      return callback(null, true);
+
+    // Check if the origin is the same as the server's origin
+    if (origin === 'https://image-roaster.dtherm.shop') {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  }
+});
+
 
 fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');

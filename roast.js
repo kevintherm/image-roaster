@@ -1,5 +1,4 @@
 import 'dotenv/config'
-import { fetchData, formatToString } from './github.js'
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import fs from 'fs'

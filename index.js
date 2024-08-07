@@ -4,9 +4,11 @@ import fastifyMultipart from '@fastify/multipart';
 import fastifyCors from '@fastify/cors';
 import path from 'path';
 import fs from 'fs';
-import crypto, { randomBytes } from 'crypto';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
+import cfTurnstile from 'fastify-cloudflare-turnstile';
 import { getRoast } from './roast.js';
+import fastifyRateLimit from '@fastify/rate-limit';
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString('hex');
@@ -20,22 +22,31 @@ const fastify = Fastify({
   bodyLimit: 10485760
 });
 
+await fastify.register(fastifyRateLimit, {
+  max: 50,
+  timeWindow: '1 minute'
+})
+
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
 });
 
 fastify.register(fastifyMultipart, {
-  imits: {
+  limits: {
     fileSize: 10485760 // 10 MB
   }
 });
+
+fastify.register(cfTurnstile, {
+  sitekey: process.env.TURNSTILE_KEY,
+  privatekey: process.env.TURNSTILE_SECRET,
+})
 
 fastify.register(fastifyCors, {
   origin: (origin, callback) => {
     if (process.env.ENV !== 'production' && process.env.NODE_ENV !== 'production')
       return callback(null, true);
 
-    // Check if the origin is the same as the server's origin
     if (origin === 'https://image-roaster.dtherm.shop') {
       return callback(null, true);
     } else {
@@ -44,39 +55,39 @@ fastify.register(fastifyCors, {
   }
 });
 
-
 fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');
 });
 
-fastify.post('/upload', async (req, res) => {
-
+fastify.post('/upload', {
+  preValidation: fastify.cfTurnstile,
+  config: {
+    rateLimit: {
+      max: 5,
+      timeWindow: '1 minute'
+    }
+  }
+}, async (req, res) => {
   const parts = req.parts();
   let file;
 
   for await (const part of parts) {
     if (part.file) {
       if (file) {
-        reply.status(400).send({ error: 'Only one image can be uploaded at a time' });
+        res.status(400).send({ error: 'Only one image can be uploaded at a time' });
         return;
       }
 
-      // Generate a random filename
       const randomFilename = generateRandomString(16) + path.extname(part.filename);
-
-      // Define the path where the file will be saved
       const uploadDir = path.join(__dirname, 'uploads');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
       }
 
       const filePath = path.join(uploadDir, randomFilename);
-
-      // Create a write stream and save the file
       const writeStream = fs.createWriteStream(filePath);
       part.file.pipe(writeStream);
 
-      // Wait until the file is fully written
       await new Promise((resolve, reject) => {
         writeStream.on('finish', resolve);
         writeStream.on('error', reject);
@@ -91,10 +102,7 @@ fastify.post('/upload', async (req, res) => {
     }
   }
 
-  
-
-  // Respond with success
-  const roast = await getRoast(file, 'uploads')
+  const roast = await getRoast(file)
 
   if (await roast) {
     if (fs.existsSync(file.path)) {
@@ -106,9 +114,12 @@ fastify.post('/upload', async (req, res) => {
     ok: true,
     text: roast
   });
-})
+});
 
-// Start the server
+fastify.put('/cfs', (req, res) => {
+  res.send(Buffer.from(process.env.TURNSTILE_KEY).toString('base64'));
+});
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3000, host: '0.0.0.0' });

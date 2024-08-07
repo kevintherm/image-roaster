@@ -1,12 +1,12 @@
 import 'dotenv/config'
-import { GoogleAIFileManager } from "@google/generative-ai/server";
+import { GoogleAIFileManager } from "@google/generative-ai/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import fs from 'fs'
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY)
 
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
-const fileManager = new GoogleAIFileManager(process.env.API_KEY);
+const fileManager = new GoogleAIFileManager(process.env.API_KEY)
 
 export async function describeImage(img) {
 
@@ -16,7 +16,7 @@ export async function describeImage(img) {
     const uploadResult = await fileManager.uploadFile(img.path, {
         mimeType: img.mimetype,
         displayName: "Image",
-    });
+    })
 
     const result = await model.generateContent([
         {
@@ -26,15 +26,15 @@ export async function describeImage(img) {
             }
         },
         { text: "Describe the image with a general description, if the image contains face of someone popular do not mention its name, just describe what they look like to the person the look alike, and last if the image contains something controversial completly ignore or make a pun out of it to avoid controversies." },
-    ]);
+    ])
 
     // delete image from cloud
-    await fileManager.deleteFile(uploadResult.file.name);
+    await fileManager.deleteFile(uploadResult.file.name)
 
     // delete image uploaded
-    fs.unlinkSync(img.path);
+    fs.unlinkSync(img.path)
 
-    console.log(`Deleted ${uploadResult.file.displayName}`);
+    console.log(`Deleted ${uploadResult.file.displayName}`)
 
     const response = await result.response
     const imageDesc = response.text()
@@ -45,7 +45,7 @@ export async function describeImage(img) {
 export async function getRoast(img = '') {
 
     try {
-        const imageDesc = await describeImage(img);
+        const imageDesc = await describeImage(img)
 
         const prompt = `${imageDesc}
     
@@ -55,7 +55,7 @@ export async function getRoast(img = '') {
     my saweria link: https://saweria.co/kevindrm
     `
 
-        const result = await model.generateContent(prompt);
+        const result = await model.generateContent(prompt)
 
         const response = await result.response
         const text = response.text()
@@ -66,7 +66,7 @@ export async function getRoast(img = '') {
             fs.unlinkSync(img.path)
         }
 
-        throw error;
+        throw error
     }
 }
 

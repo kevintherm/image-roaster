@@ -33,6 +33,7 @@
           id="photo"
           required
         />
+        <div class="container turnstile"></div>
         <button>🔥 Menyalakan 🔥</button>
       </form>
 
@@ -77,27 +78,44 @@
       <p>Terinsiprasi dari github account roast</p>
     </footer>
 
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
+      defer
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-      const form = document.querySelector("form");
+      const form = document.querySelector("form"), button = document.querySelector('form button');
       const photo = document.querySelector("#photo");
       const roast = document.querySelector("#roast");
       const loading = document.querySelector("#loading");
       const preview = document.querySelector("#preview");
 
+      let cfttoken;
+
       photo.onchange = (evt) => {
         const [file] = photo.files;
         if (file) {
           preview.src = URL.createObjectURL(file);
+          turnstile.reset('.turnstile')
         }
       };
 
       form.onsubmit = (e) => {
         e.preventDefault();
-        loading.style.opacity = 1;
         roast.innerHTML = "";
+        button.disabled = true
+
+        if (!cfttoken) {
+          loading.style.opacity = 0;
+          roast.innerHTML =
+            "Captcha is not ready. Please complete the captcha before submitting.";
+          return;
+        }
+
+        loading.style.opacity = 1;
 
         const data = new FormData();
+        data.append("cf-turnstile-response", cfttoken);
         data.append("file", photo.files[0]);
 
         fetch("/upload", {
@@ -112,17 +130,35 @@
               loading.style.opacity = 0;
               form.reset();
               roast.innerHTML = marked.parse(data.text);
+              turnstile.reset(".turnstile");
             } else if (data.statusCode == 429) {
               preview.style.opacity = 1;
               preview.style.height = "100%";
               loading.style.opacity = 0;
               form.reset();
-              roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭`;
+              preview.src = '';
+              roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭<br><small>${data.message}</small>`;
             } else {
               loading.style.opacity = 0;
               roast.innerHTML =
-                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣 Klik Roast buat coba lagi";
+                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣\nKlik Roast buat coba lagi";
             }
+            button.disabled = false
+          })
+      };
+
+      window.onloadTurnstileCallback = function () {
+        fetch("/cfs", {
+          method: "put",
+        })
+          .then((data) => data.text())
+          .then((k) => {
+            turnstile.render(".turnstile", {
+              sitekey: atob(k),
+              callback: function (token) {
+                cfttoken = token;
+              },
+            });
           });
       };
     </script>

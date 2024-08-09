@@ -42,18 +42,9 @@ fastify.register(cfTurnstile, {
   privatekey: process.env.TURNSTILE_SECRET,
 })
 
-fastify.register(fastifyCors, {
-  origin: (origin, callback) => {
-    if (process.env.ENV !== 'production' && process.env.NODE_ENV !== 'production')
-      return callback(null, true);
-
-    if (origin === 'https://image-roaster.dtherm.shop') {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  }
-});
+// fastify.register(fastifyCors, {
+//   origin: 
+// });
 
 fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');
@@ -68,6 +59,9 @@ fastify.post('/upload', {
     }
   }
 }, async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "https://image-roaster.dtherm.shop");
+  res.header("Access-Control-Allow-Methods", "POST");
+
   const parts = req.parts();
   let file;
 

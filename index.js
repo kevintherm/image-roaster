@@ -42,9 +42,9 @@ fastify.register(cfTurnstile, {
   privatekey: process.env.TURNSTILE_SECRET,
 })
 
-// fastify.register(fastifyCors, {
-//   origin: 
-// });
+fastify.register(fastifyCors, {
+  origin: ['https://image-roaster.dtherm.shop'] 
+});
 
 fastify.get('/', (request, reply) => {
   reply.sendFile('index.html');
@@ -59,9 +59,6 @@ fastify.post('/upload', {
     }
   }
 }, async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "https://image-roaster.dtherm.shop");
-  res.header("Access-Control-Allow-Methods", "POST");
-
   const parts = req.parts();
   let file;
 

@@ -1,202 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Roasting Foto</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-    />
-  </head>
-  <body class="min-h-screen bg-slate-100">
-    <main class="container">
-      <h1 class="text-xl text-center font-bold">Roasting Foto</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roasting Foto</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+  />
+</head>
+<body class="min-h-screen bg-slate-100">
+  <main class="container">
+    <h1 class="text-xl text-center font-bold">Roasting Foto</h1>
 
-      <small>
-        <blockquote>
-          Foto akan langsung di hapus jadi tenang aja gabakal bocor dan gabakal
-          bisa dilihat orang lain. source:
-          <a
-            href="https://github.com/kevintherm/image-roaster/blob/main/roast.js#L31-L35"
-            >Sumber</a
-          >
-        </blockquote>
-      </small>
+    <small>
+      <blockquote>
+        Foto akan langsung di hapus jadi tenang aja gabakal bocor dan gabakal
+        bisa dilihat orang lain. source:
+        <a href="https://github.com/kevintherm/image-roaster/blob/main/roast.js#L31-L35">Sumber</a>
+      </blockquote>
+    </small>
 
-      <form enctype="multipart/form-data">
-        <label for="photo">Pilih gambar yang mau di roasting</label>
-        <input
-          type="file"
-          accept="image/jpeg, image/jpg, image/png, image/webm"
-          placeholder="Pilih gambar"
-          id="photo"
-          required
-        />
-        <div class="container turnstile"></div>
-        <button>🔥 Menyalakan 🔥</button>
-      </form>
-
-      <div aria-busy="true" id="loading" style="opacity: 0; margin-block: 32px">
-        Sabar lagi mikir...
-      </div>
-
-      <img
-        id="preview"
-        src=""
-        alt="Foto Terkait"
-        style="opacity: 0; max-width: 350px; height: 0"
+    <form enctype="multipart/form-data">
+      <label for="photo">Pilih gambar yang mau di roasting</label>
+      <input
+        type="file"
+        accept="image/jpeg, image/jpg, image/png, image/webm"
+        placeholder="Pilih gambar"
+        id="photo"
+        required
       />
+      <div class="container turnstile"></div>
+      <button>🔥 Menyalakan 🔥</button>
+    </form>
 
-      <p id="roast" style="margin-block: 32px"></p>
-    </main>
+    <div aria-busy="true" id="loading" style="opacity: 0; margin-block: 32px">
+      Sabar lagi mikir...
+    </div>
 
-    <hr />
+    <img
+      id="preview"
+      src=""
+      alt="Foto Terkait"
+      style="opacity: 0; max-width: 350px; height: 0"
+    />
 
-    <footer class="container">
-      <p>
-        No Copyright &#169; KevinDRM - Pakai suka suka 🔥 source code ada
-        dibawah
-      </p>
-      <p>Support developer 😁</p>
-      <ul>
-        <li>
-          <a target="_blank" href="https://saweria.co/kevindrm">Saweria</a>
-        </li>
-        <li>
-          <a target="_blank" href="https://github.com/kevintherm/image-roaster"
-            >Github</a
-          >
-        </li>
-        <li>
-          <a target="_blank" href="https://instagram.com/kevindotdev"
-            >Instagram</a
-          >
-        </li>
-      </ul>
+    <p id="roast" style="margin-block: 32px"></p>
+  </main>
 
-      <p>Terinsiprasi dari github account roast</p>
-    </footer>
+  <hr />
 
-    <script
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
-      defer
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script>
-      const form = document.querySelector("form"),
-            button = document.querySelector('form button');
-      const photo = document.querySelector("#photo");
-      const roast = document.querySelector("#roast");
-      const loading = document.querySelector("#loading");
-      const preview = document.querySelector("#preview");
-    
-      let cfttoken;
-      let turnstileEnabled = false;
-    
-      // Log when the photo input changes
-      photo.onchange = (evt) => {
-        const [file] = photo.files;
-        if (file) {
-          preview.src = URL.createObjectURL(file);
-          if (turnstileEnabled) {
-            turnstile.reset('.turnstile');
-          }
-        }
-      };
-    
-      // Log when the form is submitted
-      form.onsubmit = (e) => {
-        e.preventDefault();
-        roast.innerHTML = "";
-        button.disabled = true;
-    
-        // Check if Turnstile is enabled and the token is missing
-        if (turnstileEnabled && !cfttoken) {
-          loading.style.opacity = 0;
-          roast.innerHTML =
-            "Captcha is not ready. Please complete the captcha before submitting.";
-          button.disabled = false;
-          return;
-        }
-    
-        // Show loading animation
-        loading.style.opacity = 1;
-    
-        const data = new FormData();
+  <footer class="container">
+    <p>
+      No Copyright &#169; KevinDRM - Pakai suka suka 🔥 source code ada
+      dibawah
+    </p>
+    <p>Support developer 😁</p>
+    <ul>
+      <li>
+        <a target="_blank" href="https://saweria.co/kevindrm">Saweria</a>
+      </li>
+      <li>
+        <a target="_blank" href="https://github.com/kevintherm/image-roaster">Github</a>
+      </li>
+      <li>
+        <a target="_blank" href="https://instagram.com/kevindotdev">Instagram</a>
+      </li>
+    </ul>
+
+    <p>Terinsiprasi dari github account roast</p>
+  </footer>
+
+  <script
+    src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback"
+    defer
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const form = document.querySelector("form"),
+          button = document.querySelector('form button');
+    const photo = document.querySelector("#photo");
+    const roast = document.querySelector("#roast");
+    const loading = document.querySelector("#loading");
+    const preview = document.querySelector("#preview");
+  
+    let cfttoken;
+    let turnstileEnabled = false;
+  
+    // Log when the photo input changes
+    photo.onchange = (evt) => {
+      const [file] = photo.files;
+      if (file) {
+        preview.src = URL.createObjectURL(file);
         if (turnstileEnabled) {
-          data.append("cf-turnstile-response", cfttoken);
+          turnstile.reset('.turnstile');
         }
-        data.append("file", photo.files[0]);
-    
-        // Send the form data to the server
-        fetch("/upload", {
-          method: "POST",
-          body: data,
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            if (data.ok) {
-              preview.style.opacity = 1;
-              preview.style.height = "100%";
-              loading.style.opacity = 0;
-              form.reset();
-              roast.innerHTML = marked.parse(data.text);
-              if (turnstileEnabled) {
-                turnstile.reset(".turnstile");
-              }
-            } else if (data.statusCode == 429) {
-              preview.style.opacity = 1;
-              preview.style.height = "100%";
-              loading.style.opacity = 0;
-              form.reset();
-              preview.src = '';
-              roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭<br><small>${data.message}</small>`;
-            } else {
-              loading.style.opacity = 0;
-              roast.innerHTML =
-                "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣\nKlik Roast buat coba lagi";
-            }
-            button.disabled = false;
-          })
-          .catch((error) => {
+      }
+    };
+  
+    // Log when the form is submitted
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      roast.innerHTML = "";
+      button.disabled = true;
+  
+      // Check if Turnstile is enabled and the token is missing
+      if (turnstileEnabled && !cfttoken) {
+        loading.style.opacity = 0;
+        roast.innerHTML = "Captcha is not ready. Please complete the captcha before submitting.";
+        button.disabled = false;
+        return;
+      }
+  
+      // Show loading animation
+      loading.style.opacity = 1;
+  
+      const data = new FormData();
+      if (turnstileEnabled) {
+        data.append("cf-turnstile-response", cfttoken);
+      }
+      data.append("file", photo.files[0]);
+  
+      // Send the form data to the server
+      fetch("/upload", {
+        method: "POST",
+        body: data,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.ok) {
+            preview.style.opacity = 1;
+            preview.style.height = "100%";
             loading.style.opacity = 0;
-            roast.innerHTML = "An error occurred during submission. Please try again.";
-            button.disabled = false;
-          });
-      };
-    
-      // Handle the onload Turnstile callback
-      window.onloadTurnstileCallback = function () {
-        fetch("/cfs", {
-          method: "PUT",
-        })
-          .then((data) => data.text())
-          .then((k) => {
-            if (k) {
-              turnstileEnabled = true;
-              turnstile.render(".turnstile", {
-                sitekey: atob(k),
-                callback: function (token) {
-                  cfttoken = token;
-                },
-              });
-            } else {
-              // Hide the Turnstile container if Turnstile is not enabled
-              document.querySelector('.turnstile').style.display = 'none';
-              turnstileEnabled = false;
+            form.reset();
+            roast.innerHTML = marked.parse(data.text);
+            if (turnstileEnabled) {
+              turnstile.reset(".turnstile");
             }
-          })
-          .catch((err) => {
-            // If there's an error fetching the key, assume Turnstile is not enabled
+          } else if (data.statusCode == 429) {
+            preview.style.opacity = 1;
+            preview.style.height = "100%";
+            loading.style.opacity = 0;
+            form.reset();
+            preview.src = '';
+            roast.innerHTML = `Traffic lagi rame, sabar sebentar pls 😭😭<br><small>${data.message}</small>`;
+          } else {
+            loading.style.opacity = 0;
+            roast.innerHTML = "Roastingan terlalu brutal sampe kena sensor 🔥🔥💀💀🤣🤣🤣\nKlik Roast buat coba lagi";
+          }
+          button.disabled = false;
+        })
+        .catch((error) => {
+          loading.style.opacity = 0;
+          roast.innerHTML = "An error occurred during submission. Please try again.";
+          button.disabled = false;
+        });
+    };
+  
+    // Handle the onload Turnstile callback
+    window.onloadTurnstileCallback = function () {
+      fetch("/cfs", {
+        method: "PUT",
+      })
+        .then((data) => data.text())
+        .then((k) => {
+          if (k) {
+            turnstileEnabled = true;
+            turnstile.render(".turnstile", {
+              sitekey: atob(k),
+              callback: function (token) {
+                cfttoken = token;
+              },
+            });
+          } else {
+            // Hide the Turnstile container if Turnstile is not enabled
             document.querySelector('.turnstile').style.display = 'none';
             turnstileEnabled = false;
-          });
-      };
-    </script>
-    
-    
-  </body>
+          }
+        })
+        .catch((err) => {
+          // If there's an error fetching the key, assume Turnstile is not enabled
+          document.querySelector('.turnstile').style.display = 'none';
+          turnstileEnabled = false;
+        });
+    };
+  </script>
+</body>
 </html>

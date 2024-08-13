@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 const fastify = Fastify({
   logger: true,
-  bodyLimit: 10485760
+  bodyLimit: 10485760 // 10 MB
 });
 
 await fastify.register(fastifyRateLimit, {
@@ -88,9 +88,7 @@ fastify.post('/upload', {
 
       await new Promise((resolve, reject) => {
         writeStream.on('finish', resolve);
-        writeStream.on('error', (err) => {
-          reject(err);
-        });
+        writeStream.on('error', reject);
       });
 
       file = {

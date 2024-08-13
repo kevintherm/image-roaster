@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import fastifyMultipart from '@fastify/multipart';
@@ -37,13 +38,17 @@ fastify.register(fastifyMultipart, {
   }
 });
 
-fastify.register(cfTurnstile, {
-  sitekey: process.env.TURNSTILE_KEY,
-  privatekey: process.env.TURNSTILE_SECRET,
-})
+if (process.env.TURNSTILE_KEY && process.env.TURNSTILE_SECRET) {
+  fastify.register(cfTurnstile, {
+    sitekey: process.env.TURNSTILE_KEY,
+    privatekey: process.env.TURNSTILE_SECRET,
+  });
+} else {
+  console.log("TURNSTILE_KEY or TURNSTILE_SECRET not provided. Skipping cfTurnstile registration.");
+}
 
 fastify.register(fastifyCors, {
-  origin: ['https://image-roaster.dtherm.shop'] 
+  origin: process.env.ORIGIN
 });
 
 fastify.get('/', (request, reply) => {
